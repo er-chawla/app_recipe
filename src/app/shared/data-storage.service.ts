@@ -1,10 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import 'rxjs/add/operator/map';
+import { Store } from '@ngrx/store';
 
 import { RecipeService } from '../recipes/recipe.service';
 import { AuthService } from '../auth/auth.service';
 import { Recipe } from '../recipes/recipe.model';
+import * as fromApp from '../store/app.reducer';
+import * as  fromAuth from '../auth/store/auth.reducers';
 
 @Injectable()
 export class DataStorageService {
@@ -15,16 +18,11 @@ export class DataStorageService {
   storeRecipes() {
     const token = this.authService.getToken();
     return this.httpClient.put('https://app-my-recipe.firebaseio.com/recipes.json',
-      this.recipeService.getRecipe(), {
-        headers: new HttpHeaders().set('auth', token)
-      });
+      this.recipeService.getRecipe());
   }
 
   getRecipes() {
-    const token = this.authService.getToken();
-    return this.httpClient.get<Recipe[]>('https://app-my-recipe.firebaseio.com/recipes.json', {
-      headers: new HttpHeaders().set('auth', token)
-    })
+    return this.httpClient.get<Recipe[]>('https://app-my-recipe.firebaseio.com/recipes.json')
       .subscribe(
         (recipes) => {
           console.log(recipes);
